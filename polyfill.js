@@ -11,27 +11,20 @@ function determineLevel(el) {
 }
 
 function adjustHeading(heading) {
-  let type = heading.localName,
-      parent = heading.parentNode;
-  if ((type === "h1" ||
-       type === "h2" ||
-       type === "h3" ||
-       type === "h4" ||
-       type === "h5" ||
-       type === "h6") &&
-      parent !== null && parent.localName === "hgroup") {
-    heading.setAttribute("role", "presentation");
-    heading.removeAttribute("aria-level");
-  } else if (type === "hgroup" || type === "h1") {
-    heading.setAttribute("aria-level", determineLevel(heading));
-    if (type === "hgroup") {
-      heading.setAttribute("role", "heading");
-    }
+  let type = heading.localName;
+  if (type === "hgroup") {
+    heading.setAttribute("role", "heading");
+    heading.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => {
+      h.setAttribute("role", "presentation");
+      h.removeAttribute("aria-level");
+    })
   }
+  
+  heading.setAttribute("aria-level", determineLevel(heading));
 }
 
 function traverseAndAdjustHeadings(doc) {
-  doc.querySelectorAll("hgroup,h1,h2,h3,h4,h5,h6").forEach(heading => {
+  doc.querySelectorAll("hgroup,h1").forEach(heading => {
     adjustHeading(heading);
   })
 }
